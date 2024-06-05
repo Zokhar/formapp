@@ -1,25 +1,22 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import TabNavigation from "./src/navigation/Navigation";
 
 const App: React.FC = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Hello, React Native with TypeScript!</Text>
-    </View>
+    <NavigationContainer>
+      <TabNavigation />
+    </NavigationContainer>
   );
 };
 
+export default App;
+
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 20,
-    color: '#333',
   },
 });
-
-export default App;
