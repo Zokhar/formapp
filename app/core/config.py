@@ -1,6 +1,5 @@
 from os import getenv
 from datetime import timedelta
-
 from pydantic_settings import BaseSettings
 
 
@@ -12,7 +11,7 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
 
     class Config:
-        env_file = ".env"
+        env_file = "../.env"
 
 
 settings = Settings()
