@@ -7,6 +7,7 @@ import Basic from '../screens/Basic';
 import Education from '../screens/Education';
 import Family from '../screens/Family';
 import Work from '../screens/Work';
+import { AppProvider } from '../context/AppContext';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,31 +15,55 @@ const Navigation: React.FC = () => {
     
     const [isBasicFilled, setIsBasicFilled] = useState(true);
     const [isEducationFilled, setIsEducationFilled] = useState(true);
+    const [isFamilyFilled, setIsFamilyFilled] = useState(true);
+    const [isWorkFilled, setIsWorkFilled] = useState(true);
+    const [isAboutFilled, setIsAboutFilled] = useState(true);
     Education
     return (
-        <View style={{paddingTop: 30, flex: 1}}>
-            <View style={{ flex: 1 }}>
-            <Tab.Navigator>
-                    <Tab.Screen 
-                        name="Basic" 
-                        children={() => <Basic setIsBasicFilled={setIsBasicFilled} />}
-                        options={{
-                            tabBarStyle: { backgroundColor: isBasicFilled ? 'white' : 'red' }
-                        }}
-                    />
-                    <Tab.Screen 
-                        name="Education" 
-                        children={() => <Education setIsEducationFilled={setIsEducationFilled} />}
-                        options={{
-                            tabBarStyle: { backgroundColor: isEducationFilled ? 'white' : 'red' }
-                        }}
-                    />
-                    <Tab.Screen name="Work" component={Work} />
-                    <Tab.Screen name="Family" component={Family} />
-                    <Tab.Screen name="About" component={About} />   
-                </Tab.Navigator>
+        <AppProvider>
+            <View style={{paddingTop: 30, flex: 1}}>
+                <View style={{ flex: 1 }}>
+                <Tab.Navigator
+                    screenOptions={({ route }) => ({
+                        tabBarIndicatorStyle: {
+                            backgroundColor: 
+                                (route.name === 'Basic' && !isBasicFilled) || 
+                                (route.name === 'Education' && !isEducationFilled) 
+                                ? 'red' 
+                                : 'blue',
+                        },
+                        tabBarActiveTintColor: 'black',
+
+                    })}
+                >
+                        <Tab.Screen 
+                            name="Basic" 
+                            children={() => <Basic setIsBasicFilled={setIsBasicFilled} />}
+                            options={{tabBarLabelStyle: {color: isBasicFilled ? 'grey' : 'red'}}}                      
+                        />
+                        <Tab.Screen 
+                            name="Education" 
+                            children={() => <Education setIsEducationFilled={setIsEducationFilled} />}
+                            options={{tabBarLabelStyle: {color: isEducationFilled ? 'grey' : 'red'}}}  
+                        />
+                        <Tab.Screen 
+                            name="Work" 
+                            children={() => <Work setIsWorkFilled={setIsWorkFilled} />}
+                            options={{tabBarLabelStyle: {color: isWorkFilled ? 'grey' : 'red'}}} />
+                        <Tab.Screen 
+                            name="Family" 
+                            children={() => <Family setIsFamilyFilled={setIsFamilyFilled} />}
+                            options={{tabBarLabelStyle: {color: isFamilyFilled ? 'grey' : 'red'}}}
+                        />
+                        <Tab.Screen 
+                            name="About" 
+                            children={() => <About setIsAboutFilled={setIsAboutFilled} />}
+                            options={{tabBarLabelStyle: {color: isAboutFilled ? 'grey' : 'red'}}} 
+                        />   
+                    </Tab.Navigator>
+                </View>
             </View>
-        </View>
+        </AppProvider>
     );
   };
 
