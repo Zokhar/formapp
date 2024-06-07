@@ -78,10 +78,10 @@ def create_user(
 
     if user_create.addresses:
         db_address = models.AddressModel(
-            passport_address=user_create.passport_address,
-            fact_address=user_create.fact_address,
-            passport_index=user_create.passport_index,
-            fact_index=user_create.fact_index,
+            passport_address=user_create.addresses.passport_address,
+            fact_address=user_create.addresses.fact_address,
+            passport_index=user_create.addresses.passport_index,
+            fact_index=user_create.addresses.fact_index,
             user_id=db_user.id
         )
         db_session.add(db_address)
