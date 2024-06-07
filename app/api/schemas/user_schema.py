@@ -159,7 +159,7 @@ class UserFunc(BaseModel):
     criminal_liabilities: str | None = Field(title="Уголовная ответсвенность")
     passport: Optional[PassportSchema]
     military_id: Optional[MilitaryIDSchema]
-    addresses: List[AddressSchema] = []
+    addresses: Optional[AddressSchema]
     educations: List[EducationSchema] = []
     post_educations: List[PostEducationSchema] = []
     skill_upgrades: List[SkillUpgradeSchema] = []
