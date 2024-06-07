@@ -80,16 +80,6 @@ class PostEducationModel(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
 
 
-class LanguageModel(Base):
-    """Язык"""
-    __tablename__ = "languages"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(256))
-    user = relationship("UserModel", back_populates="languages")
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-
 class SkillUpgradeModel(Base):
     """Повышение квалификации"""
     __tablename__ = "skill_upgrades"
@@ -112,16 +102,6 @@ class WorkExperienceModel(Base):
     date_of_start = Column(String(256))
     date_of_end = Column(String(256))
     user = relationship("UserModel", back_populates="works_experience")
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-
-class GovAwardsModel(Base):
-    """Государственные награды"""
-    __tablename__ = "government_awards"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(256))
-    user = relationship("UserModel", back_populates="government_awards")
     user_id = Column(Integer, ForeignKey('users.id'))
 
 
@@ -149,17 +129,6 @@ class FamilyModel(Base):
     place_of_work = Column(String(256))
     address = Column(String(256))
     user = relationship("UserModel", back_populates="relatives")
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-
-class CriminalLiabilityModel(Base):
-    """Уголовная ответственность"""
-    __tablename__ = "criminal_liabilities"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    status = Column(Boolean)
-    text = Column(String(256))
-    user = relationship("UserModel", back_populates="criminal_liabilities")
     user_id = Column(Integer, ForeignKey('users.id'))
 
 
@@ -208,17 +177,16 @@ class UserModel(Base):
     second_24 = Column(Boolean)
     additional_information = Column(String(512))
     date_of_completion = Column(String(256))
+    criminal_liabilities = Column(String(256))
+    languages = Column(String(256))
+    government_awards = Column(String(256))
     passport = relationship("PassportModel", back_populates="user", uselist=False)
     military_id = relationship("MilitaryIDModel", back_populates="user", uselist=False)
-    addresses = relationship("AddressModel", back_populates="user")
+    addresses = relationship("AddressModel", back_populates="user", uselist=False)
     educations = relationship("EducationModel", back_populates="user")
     post_educations = relationship("PostEducationModel", back_populates="user")
-    languages = relationship("LanguageModel", back_populates="user")
     skill_upgrades = relationship("SkillUpgradeModel", back_populates="user")
     works_experience = relationship("WorkExperienceModel", back_populates="user")
-    government_awards = relationship("GovAwardsModel", back_populates="user")
     stays_abroad = relationship("StayAbroadModel", back_populates="user")
     relatives = relationship("FamilyModel", back_populates="user")
-    criminal_liabilities = relationship("CriminalLiabilityModel", back_populates="user")
     recommendations = relationship("RecommendationModel", back_populates="user")
-    

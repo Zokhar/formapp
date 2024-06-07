@@ -15,7 +15,6 @@ router = APIRouter()
 @router.post("/users", response_model=user_schema.User)
 def create_user(
         user_create: user_schema.UserFunc,
-        passport_create: user_schema.PassportCreate,
         db_session: Session = Depends(get_db)
 ):
     db_user = models.UserModel(
@@ -45,7 +44,10 @@ def create_user(
         first_24=user_create.first_24,
         second_24=user_create.second_24,
         additional_information=user_create.additional_information,
-        date_of_completion=user_create.date_of_completion
+        date_of_completion=user_create.date_of_completion,
+        languages=user_create.languages,
+        government_awards=user_create.government_awards,
+        criminal_liabilities=user_create.criminal_liabilities,
     )
 
     db_session.add(db_user)
@@ -54,15 +56,13 @@ def create_user(
 
     if user_create.passport:
         db_passport = models.PassportModel(
-            series=passport_create.series,
-            number=passport_create.number,
-            issued_by=passport_create.issued_by,
-            date_of_issue=passport_create.date_of_issue,
+            series=user_create.passport.series,
+            number=user_create.passport.number,
+            issued_by=user_create.passport.issued_by,
+            date_of_issue=user_create.passport.date_of_issue,
             user_id=db_user.id
         )
         db_session.add(db_passport)
-        db_session.commit()
-        db_session.refresh(db_passport)
 
     if user_create.military_id:
         db_military_id = models.MilitaryIDModel(
@@ -75,15 +75,13 @@ def create_user(
             user_id=db_user.id
         )
         db_session.add(db_military_id)
-        db_session.commit()
-        db_session.refresh(db_military_id)
 
-    for address in user_create.addresses:
+    if user_create.addresses:
         db_address = models.AddressModel(
-            passport_address=address.passport_address,
-            fact_address=address.fact_address,
-            passport_index=address.passport_index,
-            fact_index=address.fact_index,
+            passport_address=user_create.passport_address,
+            fact_address=user_create.fact_address,
+            passport_index=user_create.passport_index,
+            fact_index=user_create.fact_index,
             user_id=db_user.id
         )
         db_session.add(db_address)
@@ -110,13 +108,6 @@ def create_user(
         )
         db_session.add(db_post_education)
 
-    for language in user_create.languages:
-        db_language = models.LanguageModel(
-            name=language.name,
-            user_id=db_user.id
-        )
-        db_session.add(db_language)
-
     for skill_upgrade in user_create.skill_upgrades:
         db_skill_upgrade = models.SkillUpgradeModel(
             speciality=skill_upgrade.speciality,
@@ -135,13 +126,6 @@ def create_user(
             user_id=db_user.id
         )
         db_session.add(db_work_experience)
-
-    for gov_award in user_create.government_awards:
-        db_gov_award = models.GovAwardsModel(
-            name=gov_award.name,
-            user_id=db_user.id
-        )
-        db_session.add(db_gov_award)
 
     for stay_abroad in user_create.stays_abroad:
         db_stay_abroad = models.StayAbroadModel(
@@ -163,14 +147,6 @@ def create_user(
             user_id=db_user.id
         )
         db_session.add(db_family)
-
-    for criminal_liability in user_create.criminal_liabilities:
-        db_criminal_liability = models.CriminalLiabilityModel(
-            status=criminal_liability.status,
-            text=criminal_liability.text,
-            user_id=db_user.id
-        )
-        db_session.add(db_criminal_liability)
 
     for recommendation in user_create.recommendations:
         db_recommendation = models.RecommendationModel(
@@ -211,40 +187,17 @@ def get_user(
     db_user.educations = db_session.query(models.EducationModel).filter(models.EducationModel.user_id == user_id).all()
     db_user.post_educations = db_session.query(models.PostEducationModel).filter(
         models.PostEducationModel.user_id == user_id).all()
-    db_user.languages = db_session.query(models.LanguageModel).filter(models.LanguageModel.user_id == user_id).all()
     db_user.skill_upgrades = db_session.query(models.SkillUpgradeModel).filter(
         models.SkillUpgradeModel.user_id == user_id).all()
     db_user.works_experience = db_session.query(models.WorkExperienceModel).filter(
         models.WorkExperienceModel.user_id == user_id).all()
-    db_user.government_awards = db_session.query(models.GovAwardsModel).filter(
-        models.GovAwardsModel.user_id == user_id).all()
     db_user.stays_abroad = db_session.query(models.StayAbroadModel).filter(
         models.StayAbroadModel.user_id == user_id).all()
     db_user.relatives = db_session.query(models.FamilyModel).filter(models.FamilyModel.user_id == user_id).all()
-    db_user.criminal_liabilities = db_session.query(models.CriminalLiabilityModel).filter(
-        models.CriminalLiabilityModel.user_id == user_id).all()
     db_user.recommendations = db_session.query(models.RecommendationModel).filter(
         models.RecommendationModel.user_id == user_id).all()
 
     return db_user
-
-
-# @router.patch("/users/{user_id}", response_model=user_schema.User)
-# def update_user(
-#         user_id: int,
-#         user_update: user_schema.UserFunc,
-#         db_session: Session = Depends(get_db)
-# ):
-#     db_user = db_session.query(models.UserModel).filter(models.UserModel.id == user_id).first()
-#     if db_user is None:
-#         raise HTTPException(status_code=404, detail="User not found")
-#
-#     for field, value in user_update.dict(exclude_unset=True).items():
-#         setattr(db_user, field, value)
-#
-#     db_session.commit()
-#     db_session.refresh(db_user)
-#     return db_user
 
 
 @router.delete("/users/{user_id}")
@@ -263,3 +216,23 @@ def delete_user(user_id: int, db_session: Session = Depends(get_db)):
         "middle_name": db_user.middle_name,
     }
 
+
+@router.delete("/delete_all")
+def delete_all_records(db: Session = Depends(get_db)):
+    try:
+        db.query(models.PassportModel).delete()
+        db.query(models.MilitaryIDModel).delete()
+        db.query(models.AddressModel).delete()
+        db.query(models.EducationModel).delete()
+        db.query(models.PostEducationModel).delete()
+        db.query(models.SkillUpgradeModel).delete()
+        db.query(models.WorkExperienceModel).delete()
+        db.query(models.StayAbroadModel).delete()
+        db.query(models.FamilyModel).delete()
+        db.query(models.RecommendationModel).delete()
+        db.query(models.UserModel).delete()
+        db.commit()
+        return {"message": "All records have been deleted successfully."}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

@@ -2,15 +2,12 @@ from pydantic import BaseModel, Field
 from typing import Optional, List
 
 
-class PassportCreate(BaseModel):
+class PassportSchema(BaseModel):
+    id: int
     series: int
     number: int
     issued_by: str
     date_of_issue: str
-
-
-class PassportSchema(PassportCreate):
-    id: int
     user_id: int
 
     class Config:
@@ -31,15 +28,12 @@ class MilitaryIDSchema(BaseModel):
         from_attributes = True
 
 
-class AddressCreate(BaseModel):
+class AddressSchema(BaseModel):
+    id: int
     passport_address: str
     fact_address: str
     passport_index: int
     fact_index: int
-
-
-class AddressSchema(AddressCreate):
-    id: int
     user_id: int
 
     class Config:
@@ -72,15 +66,6 @@ class PostEducationSchema(BaseModel):
         from_attributes = True
 
 
-class LanguageSchema(BaseModel):
-    id: int
-    name: str
-    user_id: int
-
-    class Config:
-        from_attributes = True
-
-
 class SkillUpgradeSchema(BaseModel):
     id: int
     speciality: str
@@ -98,15 +83,6 @@ class WorkExperienceSchema(BaseModel):
     position: str
     date_of_start: str
     date_of_end: str
-    user_id: int
-
-    class Config:
-        from_attributes = True
-
-
-class GovAwardsSchema(BaseModel):
-    id: int
-    name: str
     user_id: int
 
     class Config:
@@ -132,16 +108,6 @@ class FamilySchema(BaseModel):
     birth_data: str
     place_of_work: str
     address: str
-    user_id: int
-
-    class Config:
-        from_attributes = True
-
-
-class CriminalLiabilitySchema(BaseModel):
-    id: int
-    status: bool
-    text: str
     user_id: int
 
     class Config:
@@ -188,18 +154,18 @@ class UserFunc(BaseModel):
     second_24: bool = Field(title="Вторая 24")
     additional_information: str | None = Field(title="Дополнительная информация")
     date_of_completion: str | None = Field(title="Дата завершения")
+    languages: str | None = Field(title="Знание языков")
+    government_awards: str | None = Field(title="Гос. награды")
+    criminal_liabilities: str | None = Field(title="Уголовная ответсвенность")
     passport: Optional[PassportSchema]
     military_id: Optional[MilitaryIDSchema]
     addresses: List[AddressSchema] = []
     educations: List[EducationSchema] = []
     post_educations: List[PostEducationSchema] = []
-    languages: List[LanguageSchema] = []
     skill_upgrades: List[SkillUpgradeSchema] = []
     works_experience: List[WorkExperienceSchema] = []
-    government_awards: List[GovAwardsSchema] = []
     stays_abroad: List[StayAbroadSchema] = []
     relatives: List[FamilySchema] = []
-    criminal_liabilities: List[CriminalLiabilitySchema] = []
     recommendations: List[RecommendationSchema] = []
 
     class Config:
@@ -235,18 +201,18 @@ class User(BaseModel):
     second_24: bool = Field(title="Вторая 24")
     additional_information: str | None = Field(title="Дополнительная информация")
     date_of_completion: str | None = Field(title="Дата завершения")
+    languages: str | None = Field(title="Знание языков")
+    government_awards: str | None = Field(title="Гос. награды")
+    criminal_liabilities: str | None = Field(title="Уголовная ответсвенность")
     passport: Optional[PassportSchema]
     military_id: Optional[MilitaryIDSchema]
-    addresses: List[AddressSchema] = []
+    addresses: Optional[AddressSchema]
     educations: List[EducationSchema] = []
     post_educations: List[PostEducationSchema] = []
-    languages: List[LanguageSchema] = []
     skill_upgrades: List[SkillUpgradeSchema] = []
     works_experience: List[WorkExperienceSchema] = []
-    government_awards: List[GovAwardsSchema] = []
     stays_abroad: List[StayAbroadSchema] = []
     relatives: List[FamilySchema] = []
-    criminal_liabilities: List[CriminalLiabilitySchema] = []
     recommendations: List[RecommendationSchema] = []
 
     class Config:
