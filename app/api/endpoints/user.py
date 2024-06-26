@@ -14,79 +14,83 @@ router = APIRouter()
 
 @router.post("/users", response_model=user_schema.User)
 def create_user(
-        user_create: user_schema.UserFunc,
+        user: user_schema.UserCreate,
         db_session: Session = Depends(get_db)
 ):
     db_user = models.UserModel(
-        name=user_create.name,
-        surname=user_create.surname,
-        middle_name=user_create.middle_name,
-        sex=user_create.sex,
-        birthday=user_create.birthday,
-        place_of_birth=user_create.place_of_birth,
-        citizenship=user_create.citizenship,
-        snils=user_create.snils,
-        inn=user_create.inn,
-        phone_number=user_create.phone_number,
-        home_phone_number=user_create.home_phone_number,
-        email=user_create.email,
-        academic_degree=user_create.academic_degree,
-        diplom=user_create.diplom,
-        academic_tile=user_create.academic_tile,
-        knowledge_for_work=user_create.knowledge_for_work,
-        old_achievements=user_create.old_achievements,
-        ad_disad=user_create.ad_disad,
-        hobbies=user_create.hobbies,
-        hr_data=user_create.hr_data,
-        family_status=user_create.family_status,
-        pc_experience=user_create.pc_experience,
-        drivers_license=user_create.drivers_license,
-        first_24=user_create.first_24,
-        second_24=user_create.second_24,
-        additional_information=user_create.additional_information,
-        date_of_completion=user_create.date_of_completion,
-        languages=user_create.languages,
-        government_awards=user_create.government_awards,
-        criminal_liabilities=user_create.criminal_liabilities,
+        name=user.form.name,
+        surname=user.form.surname,
+        middle_name=user.form.middle_name,
+        sex=user.form.sex,
+        birthday=user.form.birthday,
+        place_of_birth=user.form.place_of_birth,
+        citizenship=user.form.citizenship,
+        snils=user.form.snils,
+        inn=user.form.inn,
+        phone_number=user.form.phone_number,
+        home_phone_number=user.form.home_phone_number,
+        email=user.form.email,
+        drivers_license=user.form.drivers_license,
+
+        academic_degree=user.education.academic_degree,
+        diplom=user.education.diplom,
+        academic_tile=user.education.academic_tile,
+        languages=user.education.languages,
+
+        old_achievements=user.work_experience.old_achievements,
+        knowledge_for_work=user.work_experience.knowledge_for_work,
+        hobbies=user.work_experience.hobbies,
+        hr_data=user.work_experience.hr_data,
+
+        family_status=user.family.family_status,
+
+        ad_disad=user.info.ad_disad,
+        government_awards=user.info.government_awards,
+        criminal_liabilities=user.info.criminal_liabilities,
+        pc_experience=user.info.pc_experience,
+        additional_information=user.info.additional_information,
+        first_24=user.info.first_24,
+        second_24=user.info.second_24,
+        date_of_completion=user.info.date_of_completion,
     )
 
     db_session.add(db_user)
     db_session.commit()
     db_session.refresh(db_user)
 
-    if user_create.passport:
+    if user.form.passport:
         db_passport = models.PassportModel(
-            series=user_create.passport.series,
-            number=user_create.passport.number,
-            issued_by=user_create.passport.issued_by,
-            date_of_issue=user_create.passport.date_of_issue,
+            series=user.form.passport.series,
+            number=user.form.passport.number,
+            issued_by=user.form.passport.issued_by,
+            date_of_issue=user.form.passport.date_of_issue,
             user_id=db_user.id
         )
         db_session.add(db_passport)
 
-    if user_create.military_id:
+    if user.form.military_id:
         db_military_id = models.MilitaryIDModel(
-            status=user_create.military_id.status,
-            rank=user_create.military_id.rank,
-            series=user_create.military_id.series,
-            number=user_create.military_id.number,
-            issued_by=user_create.military_id.issued_by,
-            date_of_issue=user_create.military_id.date_of_issue,
+            status=user.form.military_id.status,
+            rank=user.form.military_id.rank,
+            series=user.form.military_id.series,
+            number=user.form.military_id.number,
+            issued_by=user.form.military_id.issued_by,
+            date_of_issue=user.form.military_id.date_of_issue,
             user_id=db_user.id
         )
         db_session.add(db_military_id)
 
-    if user_create.addresses:
+    if user.form.address:
         db_address = models.AddressModel(
-            passport_address=user_create.addresses.passport_address,
-            fact_address=user_create.addresses.fact_address,
-            passport_index=user_create.addresses.passport_index,
-            fact_index=user_create.addresses.fact_index,
+            passport_address=user.form.address.passport_address,
+            fact_address=user.form.address.fact_address,
+            passport_index=user.form.address.passport_index,
+            fact_index=user.form.address.fact_index,
             user_id=db_user.id
         )
         db_session.add(db_address)
 
-    for education in user_create.educations:
+    for education in user.education.educations:
         db_education = models.EducationModel(
             education_type=education.education_type,
             name=education.name,
@@ -98,7 +102,7 @@ def create_user(
         )
         db_session.add(db_education)
 
-    for post_education in user_create.post_educations:
+    for post_education in user.education.post_educations:
         db_post_education = models.PostEducationModel(
             education_type=post_education.education_type,
             name=post_education.name,
@@ -108,7 +112,7 @@ def create_user(
         )
         db_session.add(db_post_education)
 
-    for skill_upgrade in user_create.skill_upgrades:
+    for skill_upgrade in user.education.skill_upgrades:
         db_skill_upgrade = models.SkillUpgradeModel(
             speciality=skill_upgrade.speciality,
             name=skill_upgrade.name,
@@ -117,7 +121,7 @@ def create_user(
         )
         db_session.add(db_skill_upgrade)
 
-    for work_experience in user_create.works_experience:
+    for work_experience in user.work_experience.works_experience:
         db_work_experience = models.WorkExperienceModel(
             name=work_experience.name,
             position=work_experience.position,
@@ -127,17 +131,17 @@ def create_user(
         )
         db_session.add(db_work_experience)
 
-    for stay_abroad in user_create.stays_abroad:
-        db_stay_abroad = models.StayAbroadModel(
-            date_of_start=stay_abroad.date_of_start,
-            date_of_end=stay_abroad.date_of_end,
-            country=stay_abroad.country,
-            goal=stay_abroad.goal,
+    for recommendation in user.work_experience.recommendations:
+        db_recommendation = models.RecommendationModel(
+            name=recommendation.name,
+            place_of_work=recommendation.place_of_work,
+            position=recommendation.position,
+            phone_number=recommendation.phone_number,
             user_id=db_user.id
         )
-        db_session.add(db_stay_abroad)
+        db_session.add(db_recommendation)
 
-    for family in user_create.relatives:
+    for family in user.family.relatives:
         db_family = models.FamilyModel(
             relation_degree=family.relation_degree,
             name=family.name,
@@ -148,16 +152,15 @@ def create_user(
         )
         db_session.add(db_family)
 
-    for recommendation in user_create.recommendations:
-        db_recommendation = models.RecommendationModel(
-            name=recommendation.name,
-            place_of_work=recommendation.place_of_work,
-            position=recommendation.position,
-            phone_number=recommendation.phone_number,
+    for stay_abroad in user.info.stays_abroad:
+        db_stay_abroad = models.StayAbroadModel(
+            date_of_start=stay_abroad.date_of_start,
+            date_of_end=stay_abroad.date_of_end,
+            country=stay_abroad.country,
+            goal=stay_abroad.goal,
             user_id=db_user.id
         )
-        db_session.add(db_recommendation)
-
+        db_session.add(db_stay_abroad)
     db_session.commit()
 
     logger.info(f"Добавили анкету {db_user.id}")

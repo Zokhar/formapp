@@ -21,7 +21,7 @@ class PassportModel(Base):
     issued_by = Column(String(256))
     date_of_issue = Column(String(256))
     user = relationship("UserModel", back_populates="passport")
-    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), unique=True)
 
 
 class MilitaryIDModel(Base):
@@ -36,20 +36,20 @@ class MilitaryIDModel(Base):
     issued_by = Column(String(256))
     date_of_issue = Column(String(256))
     user = relationship("UserModel", back_populates="military_id")
-    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), unique=True)
 
 
 class AddressModel(Base):
     """Адреса"""
-    __tablename__ = "addresses"
+    __tablename__ = "address"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     passport_address = Column(String(256))
     fact_address = Column(String(256))
     passport_index = Column(Integer)
     fact_index = Column(Integer)
-    user = relationship("UserModel", back_populates="addresses")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("UserModel", back_populates="address")
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class EducationModel(Base):
@@ -64,7 +64,7 @@ class EducationModel(Base):
     date_of_end = Column(String(256))
     speciality = Column(String(256))
     user = relationship("UserModel", back_populates="educations")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class PostEducationModel(Base):
@@ -77,7 +77,7 @@ class PostEducationModel(Base):
     number = Column(String(256))
     speciality = Column(String(256))
     user = relationship("UserModel", back_populates="post_educations")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class SkillUpgradeModel(Base):
@@ -89,7 +89,7 @@ class SkillUpgradeModel(Base):
     name = Column(String(256))
     date_of_end = Column(String(256))
     user = relationship("UserModel", back_populates="skill_upgrades")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class WorkExperienceModel(Base):
@@ -102,7 +102,7 @@ class WorkExperienceModel(Base):
     date_of_start = Column(String(256))
     date_of_end = Column(String(256))
     user = relationship("UserModel", back_populates="works_experience")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class StayAbroadModel(Base):
@@ -115,7 +115,7 @@ class StayAbroadModel(Base):
     country = Column(String(256))
     goal = Column(String(256))
     user = relationship("UserModel", back_populates="stays_abroad")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class FamilyModel(Base):
@@ -129,7 +129,7 @@ class FamilyModel(Base):
     place_of_work = Column(String(256))
     address = Column(String(256))
     user = relationship("UserModel", back_populates="relatives")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class RecommendationModel(Base):
@@ -142,7 +142,7 @@ class RecommendationModel(Base):
     position = Column(String(256))
     phone_number = Column(String(256))
     user = relationship("UserModel", back_populates="recommendations")
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
 
 
 class UserModel(Base):
@@ -180,13 +180,13 @@ class UserModel(Base):
     criminal_liabilities = Column(String(256))
     languages = Column(String(256))
     government_awards = Column(String(256))
-    passport = relationship("PassportModel", back_populates="user", uselist=False)
-    military_id = relationship("MilitaryIDModel", back_populates="user", uselist=False)
-    addresses = relationship("AddressModel", back_populates="user", uselist=False)
-    educations = relationship("EducationModel", back_populates="user")
-    post_educations = relationship("PostEducationModel", back_populates="user")
-    skill_upgrades = relationship("SkillUpgradeModel", back_populates="user")
-    works_experience = relationship("WorkExperienceModel", back_populates="user")
-    stays_abroad = relationship("StayAbroadModel", back_populates="user")
-    relatives = relationship("FamilyModel", back_populates="user")
-    recommendations = relationship("RecommendationModel", back_populates="user")
+    passport = relationship("PassportModel", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    military_id = relationship("MilitaryIDModel", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    address = relationship("AddressModel", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    educations = relationship("EducationModel", back_populates="user", cascade="all, delete-orphan")
+    post_educations = relationship("PostEducationModel", back_populates="user", cascade="all, delete-orphan")
+    skill_upgrades = relationship("SkillUpgradeModel", back_populates="user", cascade="all, delete-orphan")
+    works_experience = relationship("WorkExperienceModel", back_populates="user", cascade="all, delete-orphan")
+    stays_abroad = relationship("StayAbroadModel", back_populates="user", cascade="all, delete-orphan")
+    relatives = relationship("FamilyModel", back_populates="user", cascade="all, delete-orphan")
+    recommendations = relationship("RecommendationModel", back_populates="user", cascade="all, delete-orphan")
