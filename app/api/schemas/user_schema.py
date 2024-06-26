@@ -132,6 +132,8 @@ class UserWorkExperience(BaseModel):
     recommendations: List[RecommendationSchema] = Field(default_factory=list, title="Рекомендации")
     hobbies: str | None = Field(title="Хобби")
     hr_data: str | None = Field(title="HR данные")
+    first_24: int = Field(title="Первый вопрос 24")
+    second_24: int = Field(title="Второй вопрос 24")
 
 
 class UserFamily(BaseModel):
@@ -147,8 +149,6 @@ class UserInfo(BaseModel):
     pc_experience: str | None = Field(title="Опыт работы с ПК")
     additional_information: str | None = Field(title="Дополнительная информация")
     date_of_completion: str | None = Field(title="Дата завершения")
-    first_24: int = Field(title="Первый вопрос 24")
-    second_24: int = Field(title="Второй вопрос 24")
 
     class Config:
         from_attributes = True
