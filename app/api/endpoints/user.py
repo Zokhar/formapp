@@ -8,7 +8,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from core.database import models
 from api.schemas import user_schema
 from core.database.db import get_db
-from functions.form import create_pdf
 
 router = APIRouter()
 
@@ -165,7 +164,6 @@ def create_user(
     db_session.commit()
 
     logger.info(f"Добавили анкету {db_user.id}")
-    create_pdf(db_user)
     return db_user
 
 
