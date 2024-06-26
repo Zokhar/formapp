@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from core.database import models
 from api.schemas import user_schema
 from core.database.db import get_db
+from functions.form import create_pdf
 
 router = APIRouter()
 
@@ -39,7 +40,6 @@ def create_user(
 
         old_achievements=user.work_experience.old_achievements,
         knowledge_for_work=user.work_experience.knowledge_for_work,
-        hobbies=user.work_experience.hobbies,
         hr_data=user.work_experience.hr_data,
         first_24=user.work_experience.first_24,
         second_24=user.work_experience.second_24,
@@ -47,6 +47,7 @@ def create_user(
         family_status=user.family.family_status,
 
         ad_disad=user.info.ad_disad,
+        hobbies=user.info.hobbies,
         government_awards=user.info.government_awards,
         criminal_liabilities=user.info.criminal_liabilities,
         pc_experience=user.info.pc_experience,
@@ -164,6 +165,7 @@ def create_user(
     db_session.commit()
 
     logger.info(f"Добавили анкету {db_user.id}")
+    create_pdf(db_user)
     return db_user
 
 

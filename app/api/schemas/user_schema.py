@@ -130,7 +130,6 @@ class UserWorkExperience(BaseModel):
     old_achievements: str | None = Field(title="Прежние достижения")
     knowledge_for_work: str | None = Field(title="Знания для работы")
     recommendations: List[RecommendationSchema] = Field(default_factory=list, title="Рекомендации")
-    hobbies: str | None = Field(title="Хобби")
     hr_data: str | None = Field(title="HR данные")
     first_24: int = Field(title="Первый вопрос 24")
     second_24: int = Field(title="Второй вопрос 24")
@@ -143,6 +142,7 @@ class UserFamily(BaseModel):
 
 class UserInfo(BaseModel):
     ad_disad: str | None = Field(title="Преимущества и недостатки")
+    hobbies: str | None = Field(title="Хобби")
     government_awards: str | None = Field(title="Гос. награды")
     stays_abroad: List[StayAbroadSchema] = Field(default_factory=list, title="Пребывание за границей")
     criminal_liabilities: str | None = Field(title="Уголовная ответсвенность")
