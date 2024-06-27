@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { AppContext } from '../context/AppContext';
+import { useFormContext } from '../context/FormContext';
 
 interface TableRow1 {
   date_of_start: string;
@@ -42,8 +43,11 @@ interface WorkExperienceDetail {
   user_id: 0;
 }
 
-const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({setIsWorkFilled}) => {
+const Work: React.FC = () => {
+  const { isWorkFilled, setIsWorkFilled } = useFormContext();
+
   const context = useContext(AppContext);
+
   if (!context) {
     throw new Error('AppContext not found');
   }

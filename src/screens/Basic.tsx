@@ -6,8 +6,11 @@ import { RadioButton } from 'react-native-paper';
 import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { AppContext } from '../context/AppContext';
+import { useFormContext } from '../context/FormContext';
 
-const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ setIsBasicFilled })=> {
+const Basic: React.FC = ()=> {
+
+    const { isBasicFilled, setIsBasicFilled } = useFormContext();
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");

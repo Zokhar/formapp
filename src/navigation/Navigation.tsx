@@ -8,16 +8,14 @@ import Education from '../screens/Education';
 import Family from '../screens/Family';
 import Work from '../screens/Work';
 import { AppProvider } from '../context/AppContext';
+import { useFormContext } from '../context/FormContext';
 
 const Tab = createMaterialTopTabNavigator();
 
 const Navigation: React.FC = () => {
     
-    const [isBasicFilled, setIsBasicFilled] = useState(true);
-    const [isEducationFilled, setIsEducationFilled] = useState(true);
-    const [isFamilyFilled, setIsFamilyFilled] = useState(true);
-    const [isWorkFilled, setIsWorkFilled] = useState(true);
-    const [isAboutFilled, setIsAboutFilled] = useState(true);
+    const { isBasicFilled, isEducationFilled, isFamilyFilled, isWorkFilled, isAboutFilled } = useFormContext();
+
     Education
     return (
         <AppProvider>
@@ -40,27 +38,27 @@ const Navigation: React.FC = () => {
                     })}
                 >
                         <Tab.Screen 
-                            name="Basic*" 
-                            children={() => <Basic setIsBasicFilled={setIsBasicFilled} />}
+                            name="Basic*"                           
+                            component={Basic}
                             options={{tabBarLabelStyle: {color: isBasicFilled ? 'grey' : 'red'}}}                      
                         />
                         <Tab.Screen 
                             name="Education" 
-                            children={() => <Education setIsEducationFilled={setIsEducationFilled} />}
+                            component={Education}
                             options={{tabBarLabelStyle: {color: isEducationFilled ? 'grey' : 'red'}}}  
                         />
                         <Tab.Screen 
                             name="Work" 
-                            children={() => <Work setIsWorkFilled={setIsWorkFilled} />}
+                            component={Work}
                             options={{tabBarLabelStyle: {color: isWorkFilled ? 'grey' : 'red'}}} />
                         <Tab.Screen 
                             name="Family" 
-                            children={() => <Family setIsFamilyFilled={setIsFamilyFilled} />}
+                            component={Family}
                             options={{tabBarLabelStyle: {color: isFamilyFilled ? 'grey' : 'red'}}}
                         />
                         <Tab.Screen 
                             name="About" 
-                            children={() => <About setIsAboutFilled={setIsAboutFilled} />}
+                            component={About}
                             options={{tabBarLabelStyle: {color: isAboutFilled ? 'grey' : 'red'}}} 
                         />   
                     </Tab.Navigator>

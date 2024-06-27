@@ -1,7 +1,8 @@
 import React, { useContext, useState,useEffect } from 'react';
-import { View, Text, TextInput, Button, ScrollView, StyleSheet, Touchable } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, StyleSheet, Touchable, Modal, TouchableHighlight } from 'react-native';
 import { AppContext } from '../context/AppContext';
 import axios from 'axios';
+import { useFormContext } from '../context/FormContext';
 
 
 type StayAbroad = {
@@ -221,8 +222,12 @@ const VisitItem: React.FC<VisitProps> = ({ visit, onChange, onRemove }) => {
   );
 };
 
-const About: React.FC<{ setIsAboutFilled: (isFilled: boolean) => void }> = ({ setIsAboutFilled }) => {
+const About: React.FC= () => {
+  const { isAboutFilled, setIsAboutFilled, isBasicFilled, isEducationFilled, isFamilyFilled, isWorkFilled } = useFormContext();
   const context = useContext(AppContext);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
   if (!context) {
     throw new Error('AppContext not found');
   }
@@ -375,7 +380,34 @@ const About: React.FC<{ setIsAboutFilled: (isFilled: boolean) => void }> = ({ se
           onChangeText={(text) => handleInputChange('seventh', text)}
         />
       </View>
-      <Button title="Добавить анкету" onPress={() => sendUserData(userData)} />
+      <Button title="Добавить анкету" onPress={() => {
+        if (isAboutFilled && isBasicFilled && isEducationFilled && isFamilyFilled && isWorkFilled){
+          sendUserData(userData)} else {
+            setModalVisible(true);
+          }
+        }} /> 
+      <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View style={styles.modalView}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>Пожалуйста, заполните все обязательные поля анкеты.</Text>
+              <TouchableHighlight
+                style={{ ...styles.openButton }}
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+              >
+                <Text style={styles.textStyle}>Закрыть</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -391,6 +423,36 @@ const styles = StyleSheet.create({
   },
   questionContainer: {
     marginBottom: 35,
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  openButton: {
+    backgroundColor: 'red',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   questionText: {
     fontSize: 18,

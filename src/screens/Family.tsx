@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { AppContext } from '../context/AppContext';
-
+import { useFormContext } from '../context/FormContext';
 
 interface Family {
   family_status: string;
@@ -39,7 +39,8 @@ type Answers = {
 };
 type IMembers = IMember[];*/
 
-const Family: React.FC<{ setIsFamilyFilled: (isFilled: boolean) => void }> = ({ setIsFamilyFilled }) => {
+const Family: React.FC = () => {
+  const { isFamilyFilled, setIsFamilyFilled } = useFormContext();
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('AppContext not found');

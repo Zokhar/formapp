@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, TextInput, Button, StyleSheet, KeyboardAvoidingView, Platform, Text, ScrollView } from 'react-native';
 import { AppContext } from '../context/AppContext';
+import { useFormContext } from '../context/FormContext';
+
 interface EducationDetail {
     id?: 0,
     education_type: string,
@@ -27,7 +29,8 @@ interface SkillsUpgrades {
     date_of_end: string,
     user_id?: 0,
 }
-const Education: React.FC<{ setIsEducationFilled: (isFilled: boolean) => void }> = ({ setIsEducationFilled }) => {
+const Education: React.FC = () => {
+    const { isEducationFilled, setIsEducationFilled } = useFormContext();
     const context = useContext(AppContext);
     if (!context) {
         throw new Error('AppContext not found');

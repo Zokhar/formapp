@@ -2,12 +2,15 @@ import * as React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigation from "./src/navigation/Navigation";
+import { FormProvider } from './src/context/FormContext';
 
 const App: React.FC = () => {
   return (
-    <NavigationContainer>
-      <TabNavigation />
-    </NavigationContainer>
+    <FormProvider>
+      <NavigationContainer>
+        <TabNavigation />
+      </NavigationContainer>
+    </FormProvider>
   );
 };
 
