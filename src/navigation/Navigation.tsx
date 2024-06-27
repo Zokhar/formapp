@@ -27,8 +27,11 @@ const Navigation: React.FC = () => {
                     screenOptions={({ route }) => ({
                         tabBarIndicatorStyle: {
                             backgroundColor: 
-                                (route.name === 'Basic' && !isBasicFilled) || 
-                                (route.name === 'Education' && !isEducationFilled) 
+                                (route.name === 'Basic*' && !isBasicFilled) || 
+                                (route.name === 'Education' && !isEducationFilled) ||
+                                (route.name === 'Work' && !isWorkFilled) ||
+                                (route.name === 'Family' && !isFamilyFilled) ||
+                                (route.name === 'About' && !isAboutFilled)
                                 ? 'red' 
                                 : 'blue',
                         },
@@ -37,7 +40,7 @@ const Navigation: React.FC = () => {
                     })}
                 >
                         <Tab.Screen 
-                            name="Basic" 
+                            name="Basic*" 
                             children={() => <Basic setIsBasicFilled={setIsBasicFilled} />}
                             options={{tabBarLabelStyle: {color: isBasicFilled ? 'grey' : 'red'}}}                      
                         />

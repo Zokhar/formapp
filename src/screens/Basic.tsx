@@ -17,7 +17,8 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
 
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [date, setDate] = useState(new Date());
-    const [showPicker, setShowPicker] = useState(false);
+    const [showPicker1, setShowPicker1] = useState(false);
+    const [showPicker2, setShowPicker2] = useState(false);
 
     const [placeOfBirth, setPlaceOfBirth] = useState("");
     const [citizenship, setCitizenship] = useState("");
@@ -46,7 +47,8 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
     const [isSeriesValid, setIsSeriesValid] = useState(true); 
     const [militaryStatus, setMilitaryStatus] = useState("");
     const [militaryRank, setMilitaryRank] = useState("");
-    const [militaryID, setMilitaryID] = useState("");
+    const [militaryIDnum, setMilitaryIDnum] = useState("");
+    const [militaryIDseries, setMilitaryIDseries] = useState("");
     const [issuedBy, setIssuedBy] = useState("");
     const [issueDate, setIssueDate] = useState("");
 
@@ -54,47 +56,87 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
     if (!context) {
         throw new Error('AppContext not found');
       }
-
-    useEffect(() => {
-        const Proverka = async () => {
-            try {
-                if (
-                    firstName &&
-                    lastName &&
-                    middleName &&
-                    isValidMobilePhone(mobilePhone) &&
-                    isValidEmail(email) &&
-                    militaryStatus && 
-                    isValidPassportNumber(passportNumber) &&
-                    isValidPassportSeries(passportSeries) &&
-                    militaryRank && 
-                    militaryID && 
-                    issuedBy && 
-                    issueDate &&
-                    placeOfBirth && 
-                    citizenship && 
-                    passportSeries && 
-                    isSeriesValid && 
-                    passportNumber && 
-                    isPassportValid && 
-                    passportIssuedBy && 
-                    passportIssuedDate && 
-                    snils && 
-                    inn && 
-                    actualIndex && 
-                    actualAddress 
-                ) {
-                    setIsBasicFilled(true);
-                } else {
-                    setIsBasicFilled(false);
-                }
-            } catch (error) {
-                    console.error(error)
-                }
-        }
-        Proverka()
-    }, [firstName, lastName, middleName, mobilePhone, email, setIsBasicFilled, militaryStatus, militaryRank, militaryID, issuedBy, issueDate, placeOfBirth, citizenship, passportSeries, isSeriesValid, passportNumber, isPassportValid, passportIssuedBy, passportIssuedDate, snils, inn, actualIndex, actualAddress]);
-
+      const { BasicResult, setBasicResult } = context!;
+      useEffect(() => {
+          const Proverka = async () => {
+              try {
+                  if (
+                      firstName &&
+                      lastName &&
+                      middleName &&
+                      isValidMobilePhone(mobilePhone) &&
+                      isValidEmail(email) &&
+                      militaryStatus && 
+                      isValidPassportNumber(passportNumber) &&
+                      isValidPassportSeries(passportSeries) &&
+                      militaryRank && 
+                      militaryIDnum && 
+                      militaryIDseries && 
+                      issuedBy && 
+                      issueDate &&
+                      placeOfBirth && 
+                      citizenship && 
+                      passportSeries && 
+                      isSeriesValid && 
+                      passportNumber && 
+                      isPassportValid && 
+                      passportIssuedBy && 
+                      passportIssuedDate && 
+                      snils && 
+                      inn && 
+                      actualIndex && 
+                      actualAddress 
+                  ) {
+                      setIsBasicFilled(true);
+                  } else {
+                      setIsBasicFilled(false);
+                  }
+              } catch (error) {
+                      console.error(error)
+                  }
+          }
+          setBasicResult({name: firstName,
+              surname: middleName,
+              middle_name: lastName,
+              sex: 'муж',
+              birthday: dateOfBirth,
+              place_of_birth: placeOfBirth,
+              citizenship: citizenship,
+              passport: {
+                id: 0,
+                series: Number(passportSeries),
+                number: Number(passportNumber),
+                issued_by: passportIssuedBy,
+                date_of_issue: passportIssuedDate,
+                user_id: 0
+              },
+              snils: snils,
+              inn: inn,
+              phone_number: mobilePhone,
+              home_phone_number: homePhone,
+              email: email,
+              military_id: {
+                id: 0,
+                status: militaryStatus,
+                rank: militaryRank,
+                series: Number(militaryIDnum),
+                number: Number(militaryIDseries),
+                issued_by: issueDate,
+                date_of_issue: '',
+                user_id: 0
+              },
+              address: {
+                id: 0,
+                passport_address: passportAddress,
+                fact_address: actualAddress,
+                passport_index: Number(passportIndex),
+                fact_index: Number(actualIndex),
+                user_id: 0
+              },
+              drivers_license: '',});
+          Proverka()
+      }, [firstName, lastName, middleName, mobilePhone, email, militaryStatus, militaryRank, militaryIDnum, militaryIDseries, issuedBy, issueDate, placeOfBirth, citizenship, passportSeries, isSeriesValid, passportNumber, isPassportValid, passportIssuedBy, passportIssuedDate, snils, inn, actualIndex, actualAddress]);
+  
     const isValidMobilePhone = (phone: string) => {
         const phoneRegex = /^[0-9]{11}$/;
         return phoneRegex.test(phone);
@@ -148,8 +190,12 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
         }
     ]), []);
 
-    const toggleDatePicker = () => {
-        setShowPicker(!showPicker)
+    const toggleDatePicker1 = () => {
+        setShowPicker1(!showPicker1)
+    };
+
+    const toggleDatePicker2 = () => {
+        setShowPicker2(!showPicker2)
     };
 
     const onChange1 = (event: any, selectedDate: Date | undefined) => {
@@ -157,7 +203,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
             setDate(selectedDate);
             setDateOfBirth(selectedDate.toLocaleDateString());
         }else{
-            setShowPicker(false);
+            setShowPicker1(false);
         }
     }
     const onChange2 = (event: any, selectedDate: Date | undefined) => {
@@ -165,7 +211,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
             setDate(selectedDate);
             setPassportIssuedDate(selectedDate.toLocaleDateString());
         }else{
-            setShowPicker(false);
+            setShowPicker2(false);
         }
     }
     return (
@@ -211,7 +257,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                     </View>
                     <View>
                         <Text style={styles.label}>Дата Рождения</Text>
-                        <TouchableOpacity onPress={toggleDatePicker} style={styles.dateInput}>
+                        <TouchableOpacity onPress={toggleDatePicker1} style={styles.dateInput}>
                             <TextInput
                                 placeholder="Дата Рождения"
                                 value={dateOfBirth}
@@ -221,7 +267,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             />
                         </TouchableOpacity>
 
-                        {showPicker && (
+                        {showPicker1 && (
                             <View>
                                 <DateTimePicker
                                     mode="date"
@@ -229,9 +275,6 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                                     value={date}
                                     onChange={onChange1}
                                 />
-                                <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.closeButton}>
-                                    <Text style={styles.closeButtonText}>Закрыть</Text>
-                                </TouchableOpacity>
                             </View>
                         )}
                     </View>
@@ -260,6 +303,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             value={passportSeries}
                             onChangeText={handlePassportSeries}
                             style={[styles.input, !isSeriesValid && styles.invalidInput]}
+                            keyboardType="numeric"
                         />
                     </View>
                     <View>
@@ -269,6 +313,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             value={passportNumber}
                             onChangeText={handlePassportNumber}
                             style={[styles.input, !isPassportValid && styles.invalidInput]}
+                            keyboardType="numeric"
                         />
                     </View>
                     
@@ -283,7 +328,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                     </View>
                     <View>
                         <Text style={styles.label}>Дата выдачи паспорта</Text>
-                        <TouchableOpacity onPress={toggleDatePicker} style={styles.dateInput}>
+                        <TouchableOpacity onPress={toggleDatePicker2} style={styles.dateInput}>
                             <TextInput
                                 placeholder="Дата выдачи паспорта"
                                 value={passportIssuedDate}
@@ -293,7 +338,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             />
                         </TouchableOpacity>
 
-                        {showPicker && (
+                        {showPicker2 && (
                             <View>
                                 <DateTimePicker
                                     mode="date"
@@ -301,9 +346,6 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                                     value={date}
                                     onChange={onChange2}
                                 />
-                                <TouchableOpacity onPress={() => setShowPicker(false)} style={styles.closeButton}>
-                                    <Text style={styles.closeButtonText}>Закрыть</Text>
-                                </TouchableOpacity>
                             </View>
                         )}
                     </View>
@@ -314,7 +356,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             value={snils}
                             onChangeText={setSnils}
                             style={styles.input}
-                            
+                            keyboardType="numeric"
                         />
                     </View>
                     <View>
@@ -415,12 +457,23 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                             />
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.cellLabel}>Военный билет: </Text>
+                            <Text style={styles.cellLabel}>Военный билет(серия): </Text>
                             <TextInput
                                 style={styles.cellValue}
                                 placeholder="____________"
-                                value={militaryID}
-                                onChangeText={setMilitaryID}
+                                value={militaryIDseries}
+                                onChangeText={setMilitaryIDseries}
+                                keyboardType="numeric"
+                            />
+                        </View>
+                        <View style={styles.row}>
+                            <Text style={styles.cellLabel}>Военный билет(номер): </Text>
+                            <TextInput
+                                style={styles.cellValue}
+                                placeholder="____________"
+                                value={militaryIDnum}
+                                onChangeText={setMilitaryIDnum}
+                                keyboardType="numeric"
                             />
                         </View>
                         <View style={styles.row}>
@@ -439,6 +492,7 @@ const Basic: React.FC<{ setIsBasicFilled: (isFilled: boolean) => void }> = ({ se
                                 placeholder="____________"
                                 value={issueDate}
                                 onChangeText={setIssueDate}
+                                keyboardType="numeric"
                             />
                         </View>
                     </View>

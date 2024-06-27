@@ -1,6 +1,21 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, ScrollView } from 'react-native';
 import { AppContext } from '../context/AppContext';
+
+
+interface Family {
+  family_status: string;
+  relatives: Relative[];
+}
+interface Relative {
+  id: number;
+  relation_degree: string;
+  name: string;
+  birth_data: string;
+  place_of_work: string;
+  address: string;
+  user_id: number;
+}
 
 type Member = {
   col1?: string;
@@ -11,30 +26,32 @@ type Member = {
 };
 
 type Answers = {
-  first?: IMember[];
+  first?: Relative[];
   second?: string;
 };
 
-type IMember = {
+/*type IMember = {
   relation_degree : string;
   name: string;
   birth_data : string;
   place_of_work : string;
   address : string;
 };
-type IMembers = IMember[];
+type IMembers = IMember[];*/
 
 const Family: React.FC<{ setIsFamilyFilled: (isFilled: boolean) => void }> = ({ setIsFamilyFilled }) => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('AppContext not found');
   }
-  const { members, setMembers, family_status, setfamily_status } = context!;
+  const { members, setMembers, family_status, setfamily_status, FamilyResult, setFamilyResult } = context!;
 
-  const [newRow, setNewRow] = useState<IMember>({ relation_degree: '', name: '', birth_data: '', place_of_work: '', address: '' });
+  const [newRow, setNewRow] = useState<Relative>({id:0,user_id:0, relation_degree: '', name: '', birth_data: '', place_of_work: '', address: '' });
   /*const [familyStatus, setFamilyStatus] = useState('');
   const [members, setMembers] = useState<IMembers>([]);*/
-
+  useEffect(() => {
+    setFamilyResult({family_status:family_status,relatives:members});
+  }, [members,family_status])
   const handleInputChange = (key: string, value: string) => {
     setNewRow(prevRow => ({
       ...prevRow,
@@ -54,25 +71,27 @@ const Family: React.FC<{ setIsFamilyFilled: (isFilled: boolean) => void }> = ({ 
 
   const addRow = () => {
     setMembers(prevMembers => [...prevMembers, newRow]);
-    setNewRow({ relation_degree: '', name: '', birth_data: '', place_of_work: '', address: '' });
+    setNewRow({id:0,user_id:0, relation_degree: '', name: '', birth_data: '', place_of_work: '', address: '' });
+
   };
 
   const removeRow = () => {
     setMembers(prevMembers => prevMembers.slice(0, -1));
+    
   };
 
   const showData = () => {
-    console.log(family_status);
-    console.log(members);
+    console.log(FamilyResult);
   };
+
   useEffect(() => {
     const isFilled = members.length > 0 && family_status.trim() !== '';
     setIsFamilyFilled(isFilled);
   }, [members, family_status, setIsFamilyFilled]);
-
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Семья</Text>
+      <Text style={styles.title}>Семья*</Text>
       <View style={styles.questionContainer}>
         <Text style={styles.questionText}>Ваши близкие родственники (дети, жена, муж, отец, мать, взрослые братья, сестры).</Text>
         <View style={styles.table}>
@@ -140,7 +159,6 @@ const Family: React.FC<{ setIsFamilyFilled: (isFilled: boolean) => void }> = ({ 
           onChangeText={setfamily_status}
         />
       </View>
-     
     </ScrollView>
   );
 };
@@ -187,12 +205,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    width: '95%',
+    height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    borderRadius: 4,
-    marginVertical: 4,
-  },
+    borderColor: 'gray',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    backgroundColor: 'white',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1.5,
+    margin: 3,
+},
   buttonContainer: {
     marginVertical: 10,
     borderRadius: 5,

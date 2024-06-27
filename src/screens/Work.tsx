@@ -1,12 +1,12 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { AppContext } from '../context/AppContext';
 
 interface TableRow1 {
-  date_of_start : string;
-  date_of_end : string;
-  name : string;
-  position : string;
+  date_of_start: string;
+  date_of_end: string;
+  name: string;
+  position: string;
 }
 interface TableRow2 {
   name: string;
@@ -14,26 +14,59 @@ interface TableRow2 {
   position: string;
   phone_number: string;
 }
+interface WorkExperience {
+  works_experience: WorkExperienceDetail[];
+  old_achievements: string;
+  knowledge_for_work: string;
+  recommendations: Recommendation[];
+  hr_data: string;
+  first_24: number;
+  second_24: number;
+}
 
-const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({ setIsWorkFilled }) => {
+interface Recommendation {
+  id: 0;
+  name: string;
+  place_of_work: string;
+  position: string;
+  phone_number: string;
+  user_id: 0;
+}
+
+interface WorkExperienceDetail {
+  id: 0;
+  name: string;
+  position: string;
+  date_of_start: string;
+  date_of_end: string;
+  user_id: 0;
+}
+
+const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({setIsWorkFilled}) => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('AppContext not found');
   }
-  const { table1Data, setTable1Data, table2Data, setTable2Data,knowledge_for_work,
+  const { table1Data, setTable1Data, table2Data, setTable2Data, knowledge_for_work,
     setKnowledge_for_work,
     old_achievements,
     setOld_achievements,
     hr_data,
-    setHr_data, } = context!;
+    setHr_data,
+    WorkResult,
+    setWorkResult,
+  } = context!;
 
+  useEffect(() => {
+    setIsWorkFilled(knowledge_for_work.length > 0 || old_achievements.length > 0 || hr_data.length > 0);
+}, [knowledge_for_work, old_achievements, hr_data, setIsWorkFilled]);
   /*const [table1Data, setTable1Data] = useState<TableRow1[]>([]);
   const [table2Data, setTable2Data] = useState<TableRow2[]>([]);*/
   /*const [knowledge_for_work , setInput1] = useState<string>('');
   const [old_achievements , setInput2] = useState<string>('');
   const [hr_data , setInput3] = useState<string>('');*/
-  
-  const [question24, setQuestion6] = useState<{ subQuestion1: boolean; subQuestion2: boolean }>({ subQuestion1: false, subQuestion2: false });
+
+  const [question24, setQuestion6] = useState<{ subQuestion1: number; subQuestion2: number }>({ subQuestion1: 0, subQuestion2: 0 });
 
   const addTable1Row = () => {
     setTable1Data([...table1Data, { date_of_start: '', date_of_end: '', name: '', position: '' }]);
@@ -51,11 +84,6 @@ const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({ setI
     setTable2Data(table2Data.slice(0, -1));
   };
 
-  useEffect(() => {
-    setIsWorkFilled(knowledge_for_work.length > 0 || old_achievements.length > 0 || hr_data.length > 0);
-}, [knowledge_for_work, old_achievements, hr_data, setIsWorkFilled]);
-
-
   const handleTableChange1 = (index: number, column: keyof TableRow1, value: string, tableSetter: React.Dispatch<React.SetStateAction<TableRow1[]>>, tableData: TableRow1[]) => {
     const newData = [...tableData];
     newData[index][column] = value;
@@ -67,20 +95,28 @@ const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({ setI
     tableSetter(newData);
   };
 
-  const handleSubQuestionChange = (subQuestion: keyof typeof question24, value: boolean) => {
+  const handleSubQuestionChange = (subQuestion: keyof typeof question24, value: number) => {
     setQuestion6({ ...question24, [subQuestion]: value });
   };
 
   const handleSubmit = () => {
-    console.log(table1Data)
-    console.log(table2Data)
-    console.log(question24)
+    console.log(WorkResult)
   };
-
+  useEffect(() => {
+    setWorkResult({
+      old_achievements: old_achievements,
+      knowledge_for_work: knowledge_for_work,
+      hr_data: hr_data,
+      first_24: question24.subQuestion1,
+      second_24: question24.subQuestion2,
+      works_experience: table1Data,
+      recommendations: table2Data
+    });
+  }, [old_achievements, knowledge_for_work,hr_data,question24,table1Data,table2Data])
   return (
     <ScrollView style={styles.container}>
       <View style={styles.inputContainer}>
-        <Text style={styles.tableContainer}>Опыт работы и/или знания, которые на Ваш взгляд могли бы быть использованы при работе</Text>
+        <Text style={styles.tableContainer}>Опыт работы и/или знания, которые на Ваш взгляд могли бы быть использованы при работе*</Text>
         <TextInput style={styles.input} value={knowledge_for_work} onChangeText={setKnowledge_for_work} />
       </View>
       <View style={styles.inputContainer}>
@@ -167,22 +203,25 @@ const Work: React.FC<{ setIsWorkFilled: (isFilled: boolean) => void }> = ({ setI
         <Text style={styles.questionText}>Стаж работы в государственной или муниципальной службе за последние 2 года (есть/нет), если есть:</Text>
         <View >
           <Text style={styles.questionText}>Входили ли в Ваши должностные (служебные) обязанности отдельные функции по управлению АКБ «Алмазэргиэнбанк»:</Text>
-          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion1', true)}>
+          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion1', 1)}>
             <Text style={question24.subQuestion1 ? styles.selected : styles.unselected}>ДА</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion1', false)}>
+          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion1', 0)}>
             <Text style={!question24.subQuestion1 ? styles.selected : styles.unselected}>НЕТ</Text>
           </TouchableOpacity>
         </View>
         <View >
           <Text style={styles.questionText}>Требуется ли согласие соответствующей комиссии по соблюдению требований к служебному поведению государственных или муниципальных служащих и урегулированию конфликта интересов</Text>
-          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion2', true)}>
+          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion2', 1)}>
             <Text style={question24.subQuestion2 ? styles.selected : styles.unselected}>ДА</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion2', false)}>
+          <TouchableOpacity onPress={() => handleSubQuestionChange('subQuestion2', 0)}>
             <Text style={!question24.subQuestion2 ? styles.selected : styles.unselected}>НЕТ</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.inputContainer}><Button title="Отправить" onPress={handleSubmit} /></View>
+
+
       </View>
     </ScrollView>
   );
@@ -192,6 +231,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#f8f8f8',
   },
   questionText: {
     fontSize: 18,
@@ -206,11 +246,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input: {
+    width: '95%',
+    height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-  },
+    borderColor: 'gray',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    backgroundColor: 'white',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 1.5,
+    margin: 3,
+},
   tableContainer: {
     marginBottom: 20,
   },
