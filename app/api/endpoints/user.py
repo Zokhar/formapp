@@ -1,19 +1,23 @@
+
+
 from typing import List
 
 from loguru import logger
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import DataError
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, UploadFile, Form, File
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 
 from core.database import models
 from api.schemas import user_schema
 from core.database.db import get_db
+from functions.form import create_pdf, send_mail
+
 
 router = APIRouter()
 
 
 @router.post("/users", response_model=user_schema.User)
-def create_user(
+async def create_user(
         user: user_schema.UserCreate,
         db_session: Session = Depends(get_db)
 ):
@@ -164,6 +168,11 @@ def create_user(
     db_session.commit()
 
     logger.info(f"Добавили анкету {db_user.id}")
+    create_pdf(db_user)
+    try:
+        await send_mail()
+    except HTTPException as e:
+        logger.error(f"Ошибка при отправке почты: {e.detail}")
     return db_user
 
 
