@@ -1,11 +1,8 @@
-
-
 from typing import List
 
 from loguru import logger
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, UploadFile, Form, File
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 
 from core.database import models
 from api.schemas import user_schema
